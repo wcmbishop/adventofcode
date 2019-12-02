@@ -1,0 +1,49 @@
+{
+  "renv": {
+    "Version": "0.7.0-78"
+  },
+  "R": {
+    "Version": "3.5.2",
+    "Repositories": [
+      {
+        "Name": "CRAN",
+        "URL": "https://cran.rstudio.com"
+      }
+    ]
+  },
+  "Packages": {
+    "magrittr": {
+      "Package": "magrittr",
+      "Version": "1.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "cb6367fec3fd68ff41424fe9797b8eaf"
+    },
+    "purrr": {
+      "Package": "purrr",
+      "Version": "0.3.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5e461a0ea8f6277be20671f8dc7e7ca9"
+    },
+    "renv": {
+      "Package": "renv",
+      "Version": "0.7.0-78",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "renv",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "6c0d45953bd255789a889ceb35584c8bc4280ffc",
+      "Hash": "fc0d500346e346716aab334e8d761653"
+    },
+    "rlang": {
+      "Package": "rlang",
+      "Version": "0.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1c51d1244106f1bed59da68857a50690"
+    }
+  }
+}

@@ -10,8 +10,7 @@ launch_fuel <- function(mass) {
 module_masses <- readLines(
   file.path("data-raw", "day1-part1.txt"), warn = FALSE) %>% 
   as.numeric()
-total_fuel <- launch_fuel(module_masses) %>% 
-  sum()
+total_fuel <- launch_fuel(module_masses) %>% sum()
 total_fuel
 
 
@@ -29,5 +28,4 @@ total_recursive_fuel <- purrr::map_dbl(
   module_masses, recursive_launch_fuel) %>% 
   sum()
 total_recursive_fuel
-
 
