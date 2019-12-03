@@ -18,8 +18,5 @@ recursive_launch_fuel <- function(mass) {
   fuel <- launch_fuel(mass)
   ifelse(fuel > 0, fuel + recursive_launch_fuel(fuel), 0)
 }
-fuel <- purrr::map_dbl(
-  module_masses, recursive_launch_fuel) %>% 
-  sum()
+fuel <- map_dbl(module_masses, recursive_launch_fuel) %>% sum()
 fuel
-
