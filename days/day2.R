@@ -3,6 +3,9 @@ library(glue)
 library(magrittr)
 library(rlang)
 library(stringr)
+library(testthat)
+
+# read input data
 ints_raw <- readLines(file.path("data-raw", "day2-part1.txt"), warn = FALSE)
 
 
@@ -41,8 +44,10 @@ intcode <- function(ints, index = 0) {
   )
 }
 
-# ints_raw <- "1,1,1,4,99,5,6,0,99"
-# intcode(parse_input(ints_raw))
+expect_equal(intcode(parse_input("1,0,0,0,99")), c(2,0,0,0,99))
+expect_equal(intcode(parse_input("2,3,0,3,99")), c(2,3,0,6,99))
+expect_equal(intcode(parse_input("2,4,4,5,99,0")), c(2,4,4,5,99,9801))
+expect_equal(intcode(parse_input("1,1,1,4,99,5,6,0,99")), c(30,1,1,4,2,5,6,0,99))
 
 # replace position 1 with the value 12 and replace position 2 with the value 2
 ints <- parse_input(ints_raw)
