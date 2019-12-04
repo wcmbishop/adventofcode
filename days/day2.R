@@ -44,6 +44,7 @@ intcode <- function(ints, index = 0) {
   )
 }
 
+# test cases
 expect_equal(intcode(parse_input("1,0,0,0,99")), c(2,0,0,0,99))
 expect_equal(intcode(parse_input("2,3,0,3,99")), c(2,3,0,6,99))
 expect_equal(intcode(parse_input("2,4,4,5,99,0")), c(2,4,4,5,99,9801))
