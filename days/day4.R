@@ -5,8 +5,6 @@ library(purrr)
 library(stringr)
 library(tibble)
 
-# read input data
-
 
 # part 1 ====
 # constraints:
