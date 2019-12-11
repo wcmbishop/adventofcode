@@ -96,5 +96,3 @@ all_phases <- tibble(
   mutate(amp_output = purrr::map_dbl(phases, ~run_feedback_amplifiers(ints, .x)))
 all_phases %>% 
   top_n(1, amp_output)
-
-top_phases$amp_output
