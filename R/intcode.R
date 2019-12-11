@@ -6,8 +6,11 @@ Intcode <- R6::R6Class(
   "Intcode", 
   private = list(
     .pointer = NA_integer_,
-    .input = NA_integer_,
+    .inputs = NA_integer_,
+    .input_pointer = NA_integer_,
     .output = NA_integer_,
+    .outputs = NA_integer_,
+    .is_complete = NA,
     .display = NA,
     .initial_state = NA_character_,
     .memory = integer(),
@@ -29,6 +32,12 @@ Intcode <- R6::R6Class(
     },
     .move_pointer = function(modes) {
       private$.pointer <- private$.pointer + length(modes) + 1
+    },
+    .get_input = function() {
+      private$.inputs[private$.input_pointer]
+    },
+    .move_input_pointer = function() {
+      private$.input_pointer <- private$.input_pointer + 1
     }
   ),
   active = list(
@@ -53,11 +62,14 @@ Intcode <- R6::R6Class(
         stop("`$.memory` is read only", call. = FALSE)
       }
     },
-    input = function(value) {
+    inputs = function(value) {
       if (missing(value)) {
-        private$.input
+        private$.inputs
       } else {
-        stop("`$.input` is read only", call. = FALSE)
+        stop("`$.inputs` is read only", call. = FALSE)
+        # stopifnot(is.numeric(value))
+        # private$.input_pointer <- 1
+        # private$.inputs <- value
       }
     },
     output = function(value) {
@@ -65,6 +77,20 @@ Intcode <- R6::R6Class(
         private$.output
       } else {
         stop("`$.output` is read only", call. = FALSE)
+      }
+    },
+    outputs = function(value) {
+      if (missing(value)) {
+        private$.outputs
+      } else {
+        stop("`$.outputs` is read only", call. = FALSE)
+      }
+    },
+    is_complete = function(value) {
+      if (missing(value)) {
+        private$.is_complete
+      } else {
+        stop("`$.is_complete` is read only", call. = FALSE)
       }
     },
     display = function(value) {
@@ -77,25 +103,50 @@ Intcode <- R6::R6Class(
     }
   ),
   public = list(
-    initialize = function(state, pointer = 0L, input = 0L, display = FALSE) {
+    initialize = function(state, pointer = 0L, inputs = 0L, display = FALSE) {
       require(stringr)
       require(rlang)
       stopifnot(is.integer(pointer), length(pointer) == 1)
-      stopifnot(is.numeric(input), length(input) == 1)
+      stopifnot(is.numeric(inputs))
       stopifnot(is.character(state), length(state) == 1)
       stopifnot(is.logical(display), length(display) == 1)
       private$.initial_state <- state
       private$.pointer <- pointer
-      private$.input <- input
+      private$.inputs <- inputs
+      private$.input_pointer <- 1
+      private$.is_complete <- FALSE
       private$.display <- display
       private$.memory <- private$.parse_state(state)
+    },
+    reset = function() {
+      private$.memory <- private$.parse_state(private$.initial_state)
+      private$.pointer <- 0
+      private$.input_pointer <- 1
+      private$.output <- NA_integer_
+      private$.outputs <- NA_integer_
+      private$.is_complete <- FALSE
+      message("memory reset to initial state.")
+      invisible(self)
+    },
+    reset_outputs = function() {
+      private$.output <- NA_integer_
+      private$.outputs <- NA_integer_
+      invisible(self)
     },
     print = function(...) {
       cat("Intcode: \n")
       cat("  memory length: ", length(private$.memory), "\n", sep = "")
+      cat("  run complete: ", private$.is_complete, "\n", sep = "")
       cat("  instruction pointer:  ", private$.pointer, "\n", sep = "")
-      cat("  input: ", private$.input, "\n", sep = "")
+      cat("  inputs: ", paste(private$.inputs, collapse = ","), "\n", sep = "")
+      cat("  input pointer:  ", private$.input_pointer, "\n", sep = "")
+      cat("  outputs: ", paste(private$.outputs, collapse = ","), "\n", sep = "")
       cat("  output: ", private$.output, "\n", sep = "")
+      invisible(self)
+    },
+    add_inputs = function(inputs) {
+      stopifnot(is.numeric(inputs))
+      private$.inputs <- c(private$.inputs, inputs)
       invisible(self)
     },
     validate_address = function(address) {
@@ -139,49 +190,27 @@ Intcode <- R6::R6Class(
       if (private$.display)
         message(glue::glue("pointer: {p} - op: {op}",
                            p = private$.pointer, op = opcode))
-      if (opcode == 99) {
-        message("processing completed.")
-      } else {
-        op <- switch(
-          opcode,
-          `1` = self$op1,
-          `2` = self$op2,
-          `3` = self$op3,
-          `4` = self$op4,
-          `5` = self$op5,
-          `6` = self$op6,
-          `7` = self$op7,
-          `8` = self$op8
+      op <- switch(
+        as.character(opcode),
+        "1" = self$op1,
+        "2" = self$op2,
+        "3" = self$op3,
+        "4" = self$op4,
+        "5" = self$op5,
+        "6" = self$op6,
+        "7" = self$op7,
+        "8" = self$op8,
+        "99" = self$op99
+      )
+      if (is.null(op)) {
+        stop(glue::glue(
+          "unexpected opcode {opcode}: '{value}' at address {address}",
+          opcode = opcode,
+          value = self$get(private$.pointer),
+          address = private$.pointer)
         )
-        if (is.null(op)) {
-          stop(glue::glue(
-            "unexpected opcode: '{value}' at address {address}",
-            value = self$get(private$.pointer),
-            address = private$.pointer)
-          )
-        }
-        op()
-        self$run()
-        # if (opcode == 1) {
-        #   self$op1()
-        # } else if (opcode == 2) {
-        #   self$op2()
-        # } else if (opcode == 3) {
-        #   self$op3()
-        # } else if (opcode == 4) {
-        #   self$op4()
-        # } else if (opcode == 5) {
-        #   self$op5()
-        # } else if (opcode == 6) {
-        #   self$op6()
-        # } else {
-          # stop(glue::glue(
-          #   "unexpected opcode: '{value}' at address {address}",
-          #   value = self$get(private$.pointer),
-          #   address = private$.pointer)
-          # )
-        # }
       }
+      op()
       invisible(self)
     },
     op1 = function() {
@@ -191,7 +220,8 @@ Intcode <- R6::R6Class(
       p2 <- self$get_by_mode(private$.pointer + 2, modes[2])
       self$set_by_mode(private$.pointer + 3, p1 + p2, modes[3])
       private$.move_pointer(modes)
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op2 = function() {
       # multiple
@@ -200,22 +230,33 @@ Intcode <- R6::R6Class(
       p2 <- self$get_by_mode(private$.pointer + 2, modes[2])
       self$set_by_mode(private$.pointer + 3, p1 * p2, modes[3])
       private$.move_pointer(modes)
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op3 = function() {
       # set from input
-      modes <- private$.fetch_modes(n = 1)
-      self$set_by_mode(private$.pointer + 1, private$.input, modes[1])
-      private$.move_pointer(modes)
+      input <- private$.get_input()
+      if (!is.na(input)) {
+        modes <- private$.fetch_modes(n = 1)
+        self$set_by_mode(private$.pointer + 1, private$.get_input(), modes[1])
+        private$.move_pointer(modes)
+        private$.move_input_pointer()
+        self$run()
+      } else {
+        message("need input...")
+      }
       invisible(self)
     },
     op4 = function() {
       # set output
       modes <- private$.fetch_modes(n = 1)
       private$.output <- self$get_by_mode(private$.pointer + 1, modes[1])
+      private$.outputs <- c(private$.outputs, private$.output) %>% 
+        na.omit() %>% as.numeric()
       private$.move_pointer(modes)
       message(private$.output)
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op5 = function() {
       # jump-if-true
@@ -227,7 +268,8 @@ Intcode <- R6::R6Class(
       } else {
         private$.move_pointer(modes)
       }
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op6 = function() {
       # jump-if-false
@@ -239,7 +281,8 @@ Intcode <- R6::R6Class(
       } else {
         private$.move_pointer(modes)
       }
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op7 = function() {
       # less than
@@ -248,7 +291,8 @@ Intcode <- R6::R6Class(
       p2 <- self$get_by_mode(private$.pointer + 2, modes[2])
       self$set_by_mode(private$.pointer + 3, ifelse(p1 < p2, 1, 0), modes[3])
       private$.move_pointer(modes)
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
     op8 = function() {
       # equals
@@ -257,13 +301,12 @@ Intcode <- R6::R6Class(
       p2 <- self$get_by_mode(private$.pointer + 2, modes[2])
       self$set_by_mode(private$.pointer + 3, ifelse(p1 == p2, 1, 0), modes[3])
       private$.move_pointer(modes)
-      invisible(self)
+      self$run()
+      # invisible(self)
     },
-    reset = function() {
-      private$.memory <- private$.parse_state(private$.initial_state)
-      private$.pointer <- 0
-      private$.output <- NA_integer_
-      message("memory reset to initial state.")
+    op99 = function() {
+      private$.is_complete <- TRUE
+      message("processing completed.")
       invisible(self)
     }
   )

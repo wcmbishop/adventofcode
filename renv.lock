@@ -117,6 +117,20 @@
       "Repository": "CRAN",
       "Hash": "156f76da413ebe13f4d7e65ae6a5d19f"
     },
+    "gtools": {
+      "Package": "gtools",
+      "Version": "3.8.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "a7fe2106d673bc8ebc7529e33d25c2ea"
+    },
+    "lifecycle": {
+      "Package": "lifecycle",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0f01069bda8cfc5e4485b0f9397e931e"
+    },
     "magrittr": {
       "Package": "magrittr",
       "Version": "1.5",
@@ -208,10 +222,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.4.1",
+      "Version": "0.4.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1c51d1244106f1bed59da68857a50690"
+      "Hash": "28812d1f03e3bc5f83ab27e915e20952"
     },
     "rprojroot": {
       "Package": "rprojroot",
@@ -254,6 +268,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "b28f74376db8b145e247e29e20bb7deb"
+    },
+    "tidyr": {
+      "Package": "tidyr",
+      "Version": "1.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "67e029f5199136c9f5e7ab583a79a8fe"
     },
     "tidyselect": {
       "Package": "tidyselect",
