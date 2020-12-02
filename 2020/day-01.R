@@ -22,12 +22,7 @@ walk(
 # part 2 ====
 # unique combinations for groups of 3
 combinations <- combn(expenses, 3, simplify = FALSE)
-walk(
-  combinations,
-  function(x) {
-    if (sum(x) == 2020) {
-      message(glue("{a} + {b} + {c} = 2020! a*b*c = {y}", 
-                   a = x[1], b = x[2], c = x[3], y = prod(x)))
-    }
-  }
-)
+i <- which(map_dbl(combinations, sum) == 2020)
+combinations[[i]]
+prod(combinations[[i]])
+
