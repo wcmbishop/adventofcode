@@ -19,7 +19,7 @@ expect_equal(ncols, ncol(tree_map))
 build_path <- function(dim, start, move) {
   rows <- seq(start[1], dim[1], by = move[1])
   cols <- seq(start[2], length.out = length(rows), by = move[2])
-  # have columns wrap around within dim bounds
+  # have column values wrap around within dim bounds
   cols <- (cols - 1) %% dim[2] + 1
   list(rows = rows, cols = cols)
 }
@@ -27,12 +27,13 @@ count_path_trees <- function(path, tree_map) {
   path_trees <- map2_lgl(path$rows, path$cols, ~tree_map[.x, .y])
   sum(path_trees)
 }
+
 # sledd path: right 3, down 1
 # (note: inputs represent row/col pairs)
 path <- build_path(dim = c(nrows, ncols), start = c(1, 1), move = c(1, 3))
-
 # find the tree values along the path
 count_path_trees(path, tree_map)
+
 
 # part 2 ====
 # build a tibble of paths to calculate the tree count for each
