@@ -47,10 +47,12 @@ paths <- tribble(
 paths <- paths %>% 
   rowwise() %>%
   mutate(
+    # define path object for each row
     path = list(build_path(
       dim = c(nrows, ncols), 
       start = c(1, 1), move = c(down, right)
     )),
+    # calculate path tree count for each row
     tree_count = count_path_trees(path, tree_map)
   )
 # multiply tree count across all paths
