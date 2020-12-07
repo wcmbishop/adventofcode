@@ -39,6 +39,7 @@ find_all_parent_bags <- function(bag_links, bags) {
   if (length(parent_bags) == 0) {
     return(NULL)
   } else {
+    # recurse to next parent bags
     parent_bags <- c(parent_bags, find_all_parent_bags(bag_links, parent_bags))
   }
   unique(parent_bags)
@@ -48,7 +49,6 @@ length(parent_bags)
 
 
 # part 2 ====
-
 # find all possible child bags of a given parent bag
 find_all_child_bags <- function(bag_links, bags, bag_counts) {
   bag_df <- tibble(bag = bags, bag_count = bag_counts)
@@ -59,6 +59,7 @@ find_all_child_bags <- function(bag_links, bags, bag_counts) {
   if (nrow(child_bags) == 0) {
     return(NULL)
   } else {
+    # recurse to next child bags
     child_bags <- bind_rows(
       child_bags, 
       find_all_child_bags(bag_links, bags = child_bags$child_bag,
@@ -68,7 +69,6 @@ find_all_child_bags <- function(bag_links, bags, bag_counts) {
   child_bags
 }
 
-child_bags <- find_all_child_bags(bag_links, bags = "shiny gold bag", 
-                                  bag_counts = 1)
+child_bags <- find_all_child_bags(
+  bag_links, bags = "shiny gold bag", bag_counts = 1)
 sum(child_bags$total_child_count)
-
