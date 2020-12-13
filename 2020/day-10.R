@@ -1,5 +1,4 @@
 library(dplyr)
-library(furrr)
 library(glue)
 library(purrr)
 library(stringr)
