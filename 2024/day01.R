@@ -2,7 +2,8 @@ library(purrr)
 library(readr)
 library(stringr)
 
-# puzzle 1 =====
+
+# part 1 =====
 
 input1 <- read_lines("data/day01-input1.txt")
 lists <- str_split(input1, "\ +")
@@ -12,7 +13,7 @@ distances <- abs(sort(left) - sort(right))
 sum(distances)
 
 
-# puzzle 2 =====
+# part 2 =====
 
 occurrence <- map_int(left, ~sum(.x == right))
 similarity <- left*occurrence

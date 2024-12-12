@@ -2,7 +2,8 @@ library(purrr)
 library(readr)
 library(stringr)
 
-# puzzle 1 =====
+
+# part 1 =====
 
 input1 <- read_lines("data/day02-input1.txt")
 reports <- str_split(input1, " ") %>%
@@ -20,7 +21,7 @@ map_lgl(reports, ~is_report_safe(.x)) %>%
   sum()
 
 
-# puzzle 2 =====
+# part 2 =====
 
 is_report_safe2 <- function(levels) {
   is_safe <- is_report_safe(levels)
